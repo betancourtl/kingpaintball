@@ -1,6 +1,6 @@
-from paintball.models import Brand
 from django.test import TestCase
 from django.db.utils import IntegrityError
+from paintball.models import Brand
 
 
 class TestBrandModel(TestCase):

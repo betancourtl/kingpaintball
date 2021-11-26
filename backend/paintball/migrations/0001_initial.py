@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Brand',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('name', models.CharField(blank=True, default='', max_length=25)),
             ],
             options={
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='Category',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('name', models.CharField(blank=True, default='', max_length=25)),
             ],
             options={
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             name='Condition',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('name', models.CharField(blank=True, default='', max_length=25)),
             ],
             options={
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
             name='Item',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('name', models.CharField(blank=True, default='', max_length=25)),
                 ('title', models.CharField(blank=True, default='', max_length=255)),
                 ('sold', models.BooleanField(default=False)),
@@ -64,14 +64,14 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'ordering': ['created'],
+                'ordering': ['created_at'],
             },
         ),
         migrations.CreateModel(
             name='Likes',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='paintball.item')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
@@ -83,13 +83,13 @@ class Migration(migrations.Migration):
             name='Comments',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('comment', models.TextField()),
                 ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='paintball.item')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'ordering': ['created'],
+                'ordering': ['created_at'],
             },
         ),
     ]

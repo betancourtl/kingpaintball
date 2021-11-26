@@ -12,19 +12,19 @@ from .models import (
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = ['id', 'name', 'updated_at', 'created']
+        fields = ['id', 'name', 'updated_at', 'created_at']
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'updated_at', 'created']
+        fields = ['id', 'name', 'updated_at', 'created_at']
 
 
 class ConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Condition
-        fields = ['id', 'name', 'updated_at', 'created']
+        fields = ['id', 'name', 'updated_at', 'created_at']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'item',
             'user',
             'updated_at',
-            'created'
+            'created_at'
         ]
 
 
@@ -48,7 +48,7 @@ class LikeSerializer(serializers.ModelSerializer):
             'item',
             'user',
             'updated_at',
-            'created'
+            'created_at'
         ]
 
 
@@ -67,5 +67,5 @@ class ItemSerializer(serializers.ModelSerializer):
             'user',
             'condition',
             'updated_at',
-            'created'
+            'created_at'
         ]
