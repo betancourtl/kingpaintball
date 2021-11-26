@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  mysql:
+    # 8.0.23 is supported by RDS
+    image: mysql:8.0.23
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: kingpaintball
+  backend:
+    depends_on:
+      - mysql
+    build: ./backend
+    restart: always
+    container_name: backend
+    command: >
+      bash -c " 
+        sleep 10;
+        python manage.py migrate;  
+        python manage.py runserver 0.0.0.0:8000 
+      "
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
