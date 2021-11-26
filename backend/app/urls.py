@@ -17,25 +17,13 @@ Including another URLconf
 from django.urls import path, include
 from django.contrib import admin
 from rest_framework import routers
-from paintball.viewsets import (
-    BrandViewSet,
-    CategoryViewSet,
-    ConditionViewSet,
-    CommentViewSet,
-    ItemViewSet,
-    LikeViewSet,
-)
-from .viewsets import UserViewSet
+from paintball.router import register_viewset as register_paintball_viewsets
+from app.router import register_viewset as register_app_viewsets
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'brands', BrandViewSet)
-router.register(r'categories', CategoryViewSet)
-router.register(r'conditions', ConditionViewSet)
-router.register(r'comments', CommentViewSet)
-router.register(r'items', ItemViewSet)
-router.register(r'likes', LikeViewSet)
+register_paintball_viewsets(router)
+register_app_viewsets(router)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
