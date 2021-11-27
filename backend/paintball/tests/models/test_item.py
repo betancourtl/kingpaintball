@@ -42,6 +42,7 @@ class TestItemModel(TestCase):
         self.assertEqual(item1.sold, True)
         self.assertEqual(item1.description, 'Item in new in box conditions!')
         self.assertEqual(item1.year, 2000)
+        self.assertEqual(item1.price, 200000.00)
         self.assertEqual(item1.category, category1)
         self.assertEqual(item1.brand, brand1)
         self.assertEqual(item1.user, user1)

@@ -4,7 +4,9 @@ from paintball.viewsets import (
   ConditionViewSet,
   CommentViewSet,
   ItemViewSet,
-  LikeViewSet
+  LikeViewSet,
+  ImageViewSet,
+  UserViewSet
 )
 def register_viewset(router):
   router.register(r'brands', BrandViewSet)
@@ -13,3 +15,5 @@ def register_viewset(router):
   router.register(r'comments', CommentViewSet)
   router.register(r'items', ItemViewSet)
   router.register(r'likes', LikeViewSet)
+  router.register(r'images', ImageViewSet)
+  router.register(r'users', UserViewSet)

@@ -1,19 +1,25 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from paintball.models import Brand
+from paintball.models import ( 
+  Brand
+)
 
 
-class BrandTests(APITestCase):
+class TestBrandsAPI(APITestCase):
 
+    def create_brands(self, brands_name):
+        url = '/api/brands/'
+        data = {
+            'name': brands_name
+        }
+        response = self.client.post(url, data)
+        return response
+    
     def test_create_brands(self):
         """
         Ensure we can create brands.
         """
-        url = '/api/brands/'
-        data = {
-            'name': 'eclipse'
-        }
-        response = self.client.post(url, data)
+        response = self.create_brands('marker')
         self.assertEqual(Brand.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -21,31 +27,31 @@ class BrandTests(APITestCase):
         """
         Ensure we can get brands.
         """
-        url = '/api/brands/'
-        response = self.client.get(url)
-        self.assertEqual(Brand.objects.count(), 0)
+        self.create_brands('eclipse')
+        
+        url = '/api/brands/1/'
+        data = { 'name': 'eclipse' }
+        response = self.client.get(url, data, format='json')
+        self.assertDictContainsSubset({ 'id': 1, 'name': 'eclipse' },response.data)
+        self.assertEqual(Brand.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_brands(self):
         """
         Ensure we can update brands.
         """
-        # Create 1 brand
-        brand = Brand(name="dye")
-        brand.save()
+        self.create_brands('eclipse')
 
-        # Update the brand
+        # Update the brands
         response = self.client.patch('/api/brands/1/', {'name': 'eclipse'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['name'], 'eclipse')
+        self.assertDictContainsSubset({ 'id': 1, 'name': 'eclipse' },response.data)
 
     def test_delete_brands(self):
         """
         Ensure we can get brands.
         """
-        # Create 1 brand
-        brand = Brand(name="dye")
-        brand.save()
+        self.create_brands('eclipse')
 
         # make sure there is only 1 item.
         self.assertEqual(Brand.objects.count(), 1)

@@ -1,11 +1,17 @@
 from rest_framework import viewsets
+from django.contrib.auth.models import User
+from .mixins import ReadWriteSerializerMixin
 from .serializers import (
     BrandSerializer,
     CategorySerializer,
     ConditionSerializer,
-    CommentSerializer,
+    CommentReadSerializer,
+    CommentWriteSerializer,
     LikeSerializer,
-    ItemSerializer,
+    ItemReadSerializer,
+    ItemWriteSerializer,
+    ImageSerializer,
+    UserSerializer
 )
 from .models import (
     Brand,
@@ -14,8 +20,12 @@ from .models import (
     Condition,
     Like,
     Item,
+    Image
 )
 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class BrandViewSet(viewsets.ModelViewSet):
     queryset = Brand.objects.all()
@@ -27,9 +37,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    read_serializer_class = CommentReadSerializer
+    write_serializer_class = CommentWriteSerializer
 
 
 class ConditionViewSet(viewsets.ModelViewSet):
@@ -42,6 +53,11 @@ class LikeViewSet(viewsets.ModelViewSet):
     serializer_class = LikeSerializer
 
 
-class ItemViewSet(viewsets.ModelViewSet):
+class ItemViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+    read_serializer_class = ItemReadSerializer
+    write_serializer_class = ItemWriteSerializer
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer

@@ -18,18 +18,15 @@ from django.urls import path, include
 from django.contrib import admin
 from rest_framework import routers
 from paintball.router import register_viewset as register_paintball_viewsets
-from app.router import register_viewset as register_app_viewsets
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 register_paintball_viewsets(router)
-register_app_viewsets(router)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('', include(router.urls)),
+    path(r'admin/', admin.site.urls),
     path(r'api/', include(router.urls)),
     path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path(r'admin/', admin.site.urls)
 ]

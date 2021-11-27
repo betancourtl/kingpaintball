@@ -1,58 +1,64 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from paintball.models import Brand
+from paintball.models import ( 
+  Condition
+)
 
 
-class BrandTests(APITestCase):
+class TestConditionAPI(APITestCase):
 
-    def test_create_brands(self):
-        """
-        Ensure we can create brands.
-        """
-        url = '/api/brands/'
+    def create_condition(self, condition_name):
+        url = '/api/conditions/'
         data = {
-            'name': 'eclipse'
+            'name': condition_name
         }
         response = self.client.post(url, data)
-        self.assertEqual(Brand.objects.count(), 1)
+        return response
+    
+    def test_create_condition(self):
+        """
+        Ensure we can create condition.
+        """
+        response = self.create_condition('new')
+        self.assertEqual(Condition.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_get_brands(self):
+    def test_get_condition(self):
         """
-        Ensure we can get brands.
+        Ensure we can get condition.
         """
-        url = '/api/brands/'
-        response = self.client.get(url)
-        self.assertEqual(Brand.objects.count(), 0)
+        self.create_condition('new')
+        
+        url = '/api/conditions/1/'
+        data = { 'name': 'new' }
+        response = self.client.get(url, data, format='json')
+        self.assertDictContainsSubset({ 'id': 1, 'name': 'new' },response.data)
+        self.assertEqual(Condition.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_brands(self):
+    def test_update_condition(self):
         """
-        Ensure we can update brands.
+        Ensure we can update condition.
         """
-        # Create 1 brand
-        brand = Brand(name="dye")
-        brand.save()
+        self.create_condition('new')
 
-        # Update the brand
-        response = self.client.patch('/api/brands/1/', {'name': 'eclipse'})
+        # Update the condition
+        response = self.client.patch('/api/conditions/1/', {'name': 'used'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['name'], 'eclipse')
+        self.assertDictContainsSubset({ 'id': 1, 'name': 'used' },response.data)
 
-    def test_delete_brands(self):
+    def test_delete_condition(self):
         """
-        Ensure we can get brands.
+        Ensure we can get condition.
         """
-        # Create 1 brand
-        brand = Brand(name="dye")
-        brand.save()
+        self.create_condition('new')
 
         # make sure there is only 1 item.
-        self.assertEqual(Brand.objects.count(), 1)
+        self.assertEqual(Condition.objects.count(), 1)
 
-        url = '/api/brands/1/'
+        url = '/api/conditions/1/'
         response = self.client.delete(url)
 
         # make sure there are 0 items.
-        self.assertEqual(Brand.objects.count(), 0)
+        self.assertEqual(Condition.objects.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
