@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from paintball.models import ( 
-  Brand
+from paintball.models import (
+    Brand
 )
 
 
@@ -14,7 +14,7 @@ class TestBrandsAPI(APITestCase):
         }
         response = self.client.post(url, data)
         return response
-    
+
     def test_create_brands(self):
         """
         Ensure we can create brands.
@@ -28,11 +28,12 @@ class TestBrandsAPI(APITestCase):
         Ensure we can get brands.
         """
         self.create_brands('eclipse')
-        
+
         url = '/api/brands/1/'
-        data = { 'name': 'eclipse' }
+        data = {'name': 'eclipse'}
         response = self.client.get(url, data, format='json')
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'eclipse' },response.data)
+        self.assertDictContainsSubset(
+            {'id': 1, 'name': 'eclipse'}, response.data)
         self.assertEqual(Brand.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -45,7 +46,8 @@ class TestBrandsAPI(APITestCase):
         # Update the brands
         response = self.client.patch('/api/brands/1/', {'name': 'eclipse'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'eclipse' },response.data)
+        self.assertDictContainsSubset(
+            {'id': 1, 'name': 'eclipse'}, response.data)
 
     def test_delete_brands(self):
         """

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from paintball.models import ( 
-  Category
+from paintball.models import (
+    Category
 )
 
 
@@ -14,7 +14,7 @@ class TestCategoryAPI(APITestCase):
         }
         response = self.client.post(url, data)
         return response
-    
+
     def test_create_category(self):
         """
         Ensure we can create category.
@@ -28,11 +28,12 @@ class TestCategoryAPI(APITestCase):
         Ensure we can get category.
         """
         self.create_category('marker')
-        
+
         url = '/api/categories/1/'
-        data = { 'name': 'marker' }
+        data = {'name': 'marker'}
         response = self.client.get(url, data, format='json')
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'marker' },response.data)
+        self.assertDictContainsSubset(
+            {'id': 1, 'name': 'marker'}, response.data)
         self.assertEqual(Category.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -45,7 +46,7 @@ class TestCategoryAPI(APITestCase):
         # Update the category
         response = self.client.patch('/api/categories/1/', {'name': 'tank'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'tank' },response.data)
+        self.assertDictContainsSubset({'id': 1, 'name': 'tank'}, response.data)
 
     def test_delete_category(self):
         """

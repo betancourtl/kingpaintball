@@ -1,7 +1,8 @@
 from rest_framework import viewsets
-from django.contrib.auth.models import User
-from .mixins import ReadWriteSerializerMixin
-from .serializers import (
+from app.models import User
+from rest_framework.permissions import IsAuthenticated
+from paintball.mixins import ReadWriteSerializerMixin
+from paintball.serializers import (
     BrandSerializer,
     CategorySerializer,
     ConditionSerializer,
@@ -13,7 +14,7 @@ from .serializers import (
     ImageSerializer,
     UserSerializer
 )
-from .models import (
+from paintball.models import (
     Brand,
     Category,
     Comment,

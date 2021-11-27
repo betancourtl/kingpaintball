@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from paintball.models import ( 
-  Condition
+from paintball.models import (
+    Condition
 )
 
 
@@ -14,7 +14,7 @@ class TestConditionAPI(APITestCase):
         }
         response = self.client.post(url, data)
         return response
-    
+
     def test_create_condition(self):
         """
         Ensure we can create condition.
@@ -28,11 +28,11 @@ class TestConditionAPI(APITestCase):
         Ensure we can get condition.
         """
         self.create_condition('new')
-        
+
         url = '/api/conditions/1/'
-        data = { 'name': 'new' }
+        data = {'name': 'new'}
         response = self.client.get(url, data, format='json')
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'new' },response.data)
+        self.assertDictContainsSubset({'id': 1, 'name': 'new'}, response.data)
         self.assertEqual(Condition.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -45,7 +45,7 @@ class TestConditionAPI(APITestCase):
         # Update the condition
         response = self.client.patch('/api/conditions/1/', {'name': 'used'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictContainsSubset({ 'id': 1, 'name': 'used' },response.data)
+        self.assertDictContainsSubset({'id': 1, 'name': 'used'}, response.data)
 
     def test_delete_condition(self):
         """

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from app.models import User
 from .models import (
     Brand,
     Image,
@@ -8,7 +9,6 @@ from .models import (
     Comment,
     Item,
 )
-from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,19 +16,21 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id',
-            'username',          
             'email',
+            'name',
             'is_staff',
+            'is_active',
         ]
+
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = [
-            'id', 
+            'id',
             'name',
             'updated_at',
-            'created_at',        
+            'created_at',
         ]
 
 
@@ -36,27 +38,27 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = [
-        'id', 
-        'name',
-        'updated_at',
-        'created_at',
-    ]
+            'id',
+            'name',
+            'updated_at',
+            'created_at',
+        ]
 
 
 class ConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Condition
         fields = [
-            'id', 
+            'id',
             'name',
             'updated_at',
-            'created_at',            
+            'created_at',
         ]
 
 
 class CommentReadSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
-    
+
     class Meta:
         model = Comment
         fields = [
@@ -68,14 +70,15 @@ class CommentReadSerializer(serializers.ModelSerializer):
             'created_at',
         ]
 
-class CommentWriteSerializer(serializers.ModelSerializer):    
+
+class CommentWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
             'id',
             'comment',
             'user',
-            'item',            
+            'item',
             'updated_at',
             'created_at',
         ]
@@ -92,6 +95,7 @@ class LikeSerializer(serializers.ModelSerializer):
             'created_at',
         ]
 
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -102,6 +106,7 @@ class ImageSerializer(serializers.ModelSerializer):
             'updated_at',
             'created_at',
         ]
+
 
 class ItemWriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,6 +127,7 @@ class ItemWriteSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
+
 class ItemReadSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     likes = LikeSerializer(many=True, read_only=True)
@@ -130,7 +136,7 @@ class ItemReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False, read_only=True)
     brand = BrandSerializer(many=False, read_only=True)
     user = UserSerializer(many=False, read_only=True)
-    
+
     class Meta:
         model = Item
 
@@ -151,5 +157,3 @@ class ItemReadSerializer(serializers.ModelSerializer):
             'updated_at',
             'created_at'
         ]
-
-

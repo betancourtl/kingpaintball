@@ -19,6 +19,7 @@ from django.contrib import admin
 from rest_framework import routers
 from paintball.router import register_viewset as register_paintball_viewsets
 
+
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 register_paintball_viewsets(router)
@@ -28,5 +29,6 @@ register_paintball_viewsets(router)
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path(r'api/', include(router.urls)),
+    # login pages
     path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
