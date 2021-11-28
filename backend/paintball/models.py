@@ -51,7 +51,7 @@ class Item(models.Model):
     # Foreign Keys
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    user = models.ForeignKey('app.User', on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
     condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -75,7 +75,7 @@ class Image(models.Model):
 # tested model
 class Like(models.Model):
     item = models.ForeignKey(Item, related_name="likes", on_delete=models.CASCADE)
-    user = models.ForeignKey('app.User', related_name="likes", on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', related_name="likes", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -90,7 +90,7 @@ class Like(models.Model):
 class Comment(models.Model):
     comment = models.TextField(blank=False)
     item = models.ForeignKey(Item, related_name="comments", on_delete=models.CASCADE)
-    user = models.ForeignKey('app.User', on_delete=models.CASCADE)
+    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

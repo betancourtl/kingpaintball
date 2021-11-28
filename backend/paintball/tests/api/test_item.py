@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from app.models import (
+from core.models import (
     User,
 )
 from paintball.models import (

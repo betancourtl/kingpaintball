@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from app.models import User
+from core.models import User
 from rest_framework.permissions import IsAuthenticated
 from paintball.mixins import ReadWriteSerializerMixin
 from paintball.serializers import (

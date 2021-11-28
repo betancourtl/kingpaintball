@@ -1,30 +1,33 @@
 version: "3.8"
 
 services:
-  mysql:
-    # 8.0.23 is supported by RDS
-    image: mysql:8.0.23
-    command: --default-authentication-plugin=mysql_native_password
-    container_name: mysql
+  postgres:
+    image: postgres:13-bullseye
+    container_name: portgres
     restart: always
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: kingpaintball
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kp
   backend:
     depends_on:
-      - mysql
+      - postgres
     build: ./backend
     restart: always
     container_name: backend
+    environment:
+      DB_HOST: postgres
+      DB_USER: admin
+      DB_PASSWORD: password
+      DB_NAME: kp
+      DB_PORT: 5432
     command: >
       bash -c " 
-        sleep 15;
-        python manage.py migrate;  
-        python manage.py runserver 0.0.0.0:8000 
+        python manage.py wait_for_db
+        python manage.py migrate
+        python manage.py runserver 0.0.0.0:8000
       "
     volumes:
       - ./backend:/app
