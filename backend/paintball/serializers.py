@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from core.models import User
-from .models import (
+from django.contrib.auth.models import User
+from paintball.models import (
     Brand,
     Image,
     Category,
@@ -14,13 +14,17 @@ from .models import (
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            'id',
-            'email',
-            'name',
-            'is_staff',
-            'is_active',
-        ]
+        fields = '__all__'
+        # fields = [
+        #     'id',
+        #     'username',
+        #     'email',
+        #     'first_name',
+        #     'last_name',
+        #     'password',
+        #     'is_staff',
+        #     'is_active'
+        # ]
 
 
 class BrandSerializer(serializers.ModelSerializer):

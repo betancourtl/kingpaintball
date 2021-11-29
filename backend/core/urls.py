@@ -16,19 +16,14 @@ Including another URLconf
 
 from django.urls import path, include
 from django.contrib import admin
-from rest_framework import routers
-from paintball.router import register_viewset as register_paintball_viewsets
-
-
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-register_paintball_viewsets(router)
+from rest_framework.authtoken import views
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    path(r'api/', include('paintball.urls')),
     path(r'admin/', admin.site.urls),
-    path(r'api/', include(router.urls)),
-    # login pages
-    path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path(r'api-token-auth/', views.obtain_auth_token, name="api-token-auth"),
+    path(r'api-auth/', include('rest_framework.urls')),
 ]
+

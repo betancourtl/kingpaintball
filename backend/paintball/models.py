@@ -1,8 +1,7 @@
-import datetime
 from django.db import models
+from django.contrib.auth.models import User
 
-# tested model
-# tested api
+
 class Brand(models.Model):
     name = models.CharField(max_length=25, blank=True, default='', unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -14,8 +13,7 @@ class Brand(models.Model):
     class Meta:
         ordering = ['name']
 
-# tested model
-# tested api
+
 class Category(models.Model):
     name = models.CharField(max_length=25, blank=True, default='', unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,8 +25,7 @@ class Category(models.Model):
     class Meta:
         ordering = ['name']
 
-# tested model
-# tested api
+
 class Condition(models.Model):
     name = models.CharField(max_length=25, blank=True, default='', unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -40,8 +37,7 @@ class Condition(models.Model):
     class Meta:
         ordering = ['name']
 
-# tested model
-# tested api
+
 class Item(models.Model):
     title = models.CharField(max_length=255, blank=True, default='')
     sold = models.BooleanField(default=False)
@@ -51,7 +47,7 @@ class Item(models.Model):
     # Foreign Keys
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -62,20 +58,31 @@ class Item(models.Model):
     class Meta:
         ordering = ['created_at']
 
-# tested model
+
 class Image(models.Model):
     # fk's
     image = models.ImageField(upload_to='images', default='images/default.png')
     # the viewset can now add images to the fields array to get all the images
     # for an item.
-    item = models.ForeignKey(Item, related_name="images",on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        Item, related_name="images",
+        on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-# tested model
+
 class Like(models.Model):
-    item = models.ForeignKey(Item, related_name="likes", on_delete=models.CASCADE)
-    user = models.ForeignKey('core.User', related_name="likes", on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        Item,
+        related_name="likes",
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User,
+        related_name="likes",
+        on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -86,11 +93,12 @@ class Like(models.Model):
         unique_together = (('item', 'user'),)
         ordering = ['item']
 
-# tested model
+
 class Comment(models.Model):
     comment = models.TextField(blank=False)
-    item = models.ForeignKey(Item, related_name="comments", on_delete=models.CASCADE)
-    user = models.ForeignKey('core.User', on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        Item, related_name="comments", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

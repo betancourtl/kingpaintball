@@ -28,8 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-AUTH_USER_MODEL = 'core.User'
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -45,8 +43,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     # My Apps
     'core',
-    'user',
     'paintball',
+    'recipe'
 ]
 
 MIDDLEWARE = [
@@ -136,11 +134,15 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # used for admin and api pages
+        'rest_framework.authentication.SessionAuthentication',
+        # used for API requests
+        'rest_framework.authentication.TokenAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny',
     ],
     # sends requests as json by default
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }

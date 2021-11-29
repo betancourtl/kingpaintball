@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.db.utils import IntegrityError
 from django.test.utils import setup_databases
-from core.models import (
+from user.models import (
     User,
 )
 from paintball.models import (
