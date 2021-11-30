@@ -1,65 +1,125 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
 from paintball.models import (
-    Category
+    Category,
+    User
 )
 
 
-class TestCategoryAPI(APITestCase):
+class TestCategoriesAPI(APITestCase):
 
-    def create_category(self, category_name):
-        url = '/api/categories/'
-        data = {
-            'name': category_name
-        }
-        response = self.client.post(url, data)
-        return response
+    def create_user(self, is_admin=False):
+        if is_admin:
+            user = User.objects.create_superuser(
+                'admin',
+                'admin@kingpaintball.com',
+                'password'
+            )
+        else:
+            user = User.objects.create_user(
+                'user',
+                'user@kingpaintball.com',
+                'password'
+            )
 
-    def test_create_category(self):
+        token = Token.objects.create(user=user)
+
+        return token
+
+    # POST Requests
+
+    def test_admin_create_categories(self):
         """
-        Ensure we can create category.
+        Ensure that admins can create categories.
         """
-        response = self.create_category('marker')
+        token = self.create_user(is_admin=True)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.post('/api/categories/', {'name': 'marker'})
         self.assertEqual(Category.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_get_category(self):
+    def test_user_creates_categories(self):
         """
-        Ensure we can get category.
+        Ensure that users can't create categories.
         """
-        self.create_category('marker')
+        token = self.create_user(is_admin=False)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.post('/api/categories/', {'name': 'marker'})
+        self.assertEqual(Category.objects.count(), 0)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    # GET Requests
+
+    def test_get_categories(self):
+        """
+        Ensure anyone can get categories.
+        """
+        category = Category.objects.create(name="marker")
+        token = self.create_user(is_admin=True)
         url = '/api/categories/1/'
-        data = {'name': 'marker'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(url)
         self.assertDictContainsSubset(
             {'id': 1, 'name': 'marker'}, response.data)
         self.assertEqual(Category.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_category(self):
-        """
-        Ensure we can update category.
-        """
-        self.create_category('marker')
+    # PATCH Requests
 
-        # Update the category
-        response = self.client.patch('/api/categories/1/', {'name': 'tank'})
+    def test_admin_update_categories(self):
+        """
+        Ensure admin can update categories.
+        """
+        Category.objects.create(name="marker")
+        token = self.create_user(is_admin=True)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.patch('/api/categories/1/', {'name': 'eclipse'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictContainsSubset({'id': 1, 'name': 'tank'}, response.data)
+        self.assertDictContainsSubset(
+            {'id': 1, 'name': 'eclipse'}, response.data)
 
-    def test_delete_category(self):
+    def test_user_cant_update_categories(self):
         """
-        Ensure we can get category.
+        Ensure user can't update categories.
         """
-        self.create_category('marker')
+        Category.objects.create(name="marker")
+        token = self.create_user(is_admin=False)
 
-        # make sure there is only 1 item.
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.patch('/api/categories/1/', {'name': 'eclipse'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # DELETE Requests
+
+    def test_admin_delete_categories(self):
+        """
+        Ensure admin can delete categories.
+        """
+        Category.objects.create(name="marker")
         self.assertEqual(Category.objects.count(), 1)
 
+        token = self.create_user(is_admin=True)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
         url = '/api/categories/1/'
         response = self.client.delete(url)
 
         # make sure there are 0 items.
         self.assertEqual(Category.objects.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_cant_delete_categories(self):
+        """
+        Ensure user cant delete categories.
+        """
+        Category.objects.create(name="marker")
+        self.assertEqual(Category.objects.count(), 1)
+
+        token = self.create_user(is_admin=False)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        url = '/api/categories/1/'
+        response = self.client.delete(url)
+
+        # make sure there are 0 items.
+        self.assertEqual(Category.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

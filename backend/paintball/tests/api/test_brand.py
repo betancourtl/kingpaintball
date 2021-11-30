@@ -1,66 +1,124 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
 from paintball.models import (
-    Brand
+    Brand,
+    User
 )
 
 
 class TestBrandsAPI(APITestCase):
 
-    def create_brands(self, brands_name):
-        url = '/api/brands/'
-        data = {
-            'name': brands_name
-        }
-        response = self.client.post(url, data)
-        return response
+    def create_user(self, is_admin=False):
+        if is_admin:
+            user = User.objects.create_superuser(
+                'admin',
+                'admin@kingpaintball.com',
+                'password'
+            )
+        else:
+            user = User.objects.create_user(
+                'user',
+                'user@kingpaintball.com',
+                'password'
+            )
 
-    def test_create_brands(self):
+        token = Token.objects.create(user=user)
+
+        return token
+
+    # POST Requests
+
+    def test_admin_create_brands(self):
         """
-        Ensure we can create brands.
+        Ensure that admins can create brands.
         """
-        response = self.create_brands('marker')
+        token = self.create_user(is_admin=True)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.post('/api/brands/', {'name': 'marker'})
         self.assertEqual(Brand.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_user_creates_brands(self):
+        """
+        Ensure that users can't create brands.
+        """
+        token = self.create_user(is_admin=False)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.post('/api/brands/', {'name': 'marker'})
+        self.assertEqual(Brand.objects.count(), 0)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # GET Requests
+
     def test_get_brands(self):
         """
-        Ensure we can get brands.
+        Ensure anyone can get brands.
         """
-        self.create_brands('eclipse')
-
+        Brand.objects.create(name="marker")
         url = '/api/brands/1/'
-        data = {'name': 'eclipse'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(url)
         self.assertDictContainsSubset(
-            {'id': 1, 'name': 'eclipse'}, response.data)
+            {'id': 1, 'name': 'marker'}, response.data)
         self.assertEqual(Brand.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_brands(self):
-        """
-        Ensure we can update brands.
-        """
-        self.create_brands('eclipse')
+    # PATCH Requests
 
-        # Update the brands
+    def test_admin_update_brands(self):
+        """
+        Ensure admin can update brands.
+        """
+        Brand.objects.create(name="marker")
+        token = self.create_user(is_admin=True)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
         response = self.client.patch('/api/brands/1/', {'name': 'eclipse'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictContainsSubset(
             {'id': 1, 'name': 'eclipse'}, response.data)
 
-    def test_delete_brands(self):
+    def test_user_cant_update_brands(self):
         """
-        Ensure we can get brands.
+        Ensure user can't update brands.
         """
-        self.create_brands('eclipse')
+        Brand.objects.create(name="marker")
+        token = self.create_user(is_admin=False)
 
-        # make sure there is only 1 item.
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        response = self.client.patch('/api/brands/1/', {'name': 'eclipse'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # DELETE Requests
+
+    def test_admin_delete_brands(self):
+        """
+        Ensure admin can delete brands.
+        """
+        Brand.objects.create(name="marker")
         self.assertEqual(Brand.objects.count(), 1)
 
+        token = self.create_user(is_admin=True)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
         url = '/api/brands/1/'
         response = self.client.delete(url)
 
         # make sure there are 0 items.
         self.assertEqual(Brand.objects.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_cant_delete_brands(self):
+        """
+        Ensure user cant delete brands.
+        """
+        Brand.objects.create(name="marker")
+        self.assertEqual(Brand.objects.count(), 1)
+
+        token = self.create_user(is_admin=False)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        url = '/api/brands/1/'
+        response = self.client.delete(url)
+
+        # make sure there are 0 items.
+        self.assertEqual(Brand.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
