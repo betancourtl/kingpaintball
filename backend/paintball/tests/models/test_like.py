@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
-from django.test.utils import setup_databases
 from paintball.models import (
     Item,
     Like,
@@ -23,7 +21,7 @@ class TestLikeModel(TestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="webdeveloperpr@gmail.com",
-            name="user",
+            username="user",
             password="123456",
             is_active=True
         )

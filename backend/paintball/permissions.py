@@ -1,6 +1,4 @@
 from rest_framework import permissions
-from rest_framework.authtoken.models import Token
-from pprint import pprint
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
 
 # authentication -> populates user and token

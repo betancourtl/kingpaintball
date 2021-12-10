@@ -22,7 +22,7 @@ class TestImageModel(TestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="webdeveloperpr@gmail.com",
-            name="user",
+            username="user",
             password="123456",
             is_active=True
         )
