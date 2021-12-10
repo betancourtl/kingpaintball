@@ -1,8 +1,6 @@
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from user.models import (
-    User,
-)
 from paintball.models import (
     Brand,
     Category,
@@ -10,7 +8,9 @@ from paintball.models import (
     Item,
     Image,
     Like,
+    User,
 )
+from pprint import pprint
 
 
 class TestItemsAPI(APITestCase):
@@ -19,25 +19,56 @@ class TestItemsAPI(APITestCase):
         category = Category.objects.create(name="marker")
         brand = Brand.objects.create(name="planet eclipse")
         condition = Condition.objects.create(name="used")
-        user = User.objects.create(
-            email="webdeveloperpr@gmail.com",
-            name="user",
-            password="123456",
-            is_active=True
-        )
-
         dict2 = {
             'category': category.id,
             'brand': brand.id,
             'condition': condition.id,
-            'user': user.id,
         }
 
         return {**dict1, **dict2}
 
-    def test_create_items(self):
+    def create_user(self, is_admin=False):
+        if is_admin:
+            user = User.objects.create_superuser(
+                'admin',
+                'admin@kingpaintball.com',
+                'password'
+            )
+        else:
+            user = User.objects.create_user(
+                'user',
+                'user@kingpaintball.com',
+                'password'
+            )
+
+        token = Token.objects.create(user=user)
+
+        return token
+
+    # POST
+    def test_authenticated_user_create_item(self):
         """
         Ensure we can create items.
+        """
+        authenticated_user_token = self.create_user(False)
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f'Token {authenticated_user_token}')
+        response = self.client.post(
+            '/api/items/',
+            self.with_foreign_props({
+                'title': 'test title',
+                'sold': True,
+                'description': 'test description',
+                'year': 2010,
+                'price': 1200.00,
+            })
+        )
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_unauthenticated_user_not_create_item(self):
+        """
+        Ensure unauthenticated users can't create item.
         """
         url = '/api/items/'
         data = self.with_foreign_props({
@@ -47,64 +78,87 @@ class TestItemsAPI(APITestCase):
             'year': 2010,
             'price': 1200.00,
         })
-
         response = self.client.post(url, data, format='json')
-        self.assertEqual(Item.objects.count(), 1)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Item.objects.count(), 0)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_get_items(self):
+    # GET
+    def test_unauthenticated_user_get_items(self):
         """
-        Ensure we can get items.
+        Ensure unauthenticated user can get items.
         """
-        data = self.with_foreign_props({
-            'title': 'test title',
-            'sold': True,
-            'description': 'test description',
-            'year': 2010,
-            'price': '1200.00',
-        })
 
-        self.client.post('/api/items/', data, format='json')
+        user = User.objects.create_user(
+            'user',
+            'user@kingpaintball.com',
+            'password'
+        )
+
+        category = Category.objects.create(name="marker")
+        brand = Brand.objects.create(name="planet eclipse")
+        condition = Condition.objects.create(name="used")
+
+        Item.objects.create(
+            title="title",
+            sold=True,
+            description="description",
+            year=2010,
+            price=199.99,
+            user=user,
+            category=category,
+            brand=brand,
+            condition=condition,
+        )
 
         response = self.client.get('/api/items/1/', {}, format='json')
 
         self.assertDictContainsSubset({
             'id': 1,
-            'title': data['title'],
-            'sold': data['sold'],
-            'description': data['description'],
-            'year': data['year'],
-            'price': data['price'],
+            'title': 'title',
+            'sold': True,
+            'description': 'description',
+            'year': 2010,
+            'price': '199.99',
         }, response.data)
         self.assertEqual(Item.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_items(self):
+    # PUT
+    def test_update_item_belongs_to_user(self):
         """
-        Ensure we can update items.
+        Ensure that only object owners can update the item.
         """
-        self.client.post(
-            '/api/items/',
-            self.with_foreign_props({
-                'title': 'test title',
-                'sold': True,
-                'description': 'test description',
-                'year': 2010,
-                'price': '1200.00',
-            }),
-            format='json'
-        )
+        # first create the item.
+        authenticated_user_token = self.create_user(False)
 
-        new_data = {
+        url = '/api/items/'
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+            'user': 1,
+        })
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f'Token {authenticated_user_token}')
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        new_data = data | {
             'title': 'new title',
             'sold': False,
-            'description': 'new test description',
+            'description': 'new description',
             'year': 2020,
-            'price': '1199.99',
+            'price': '130.00',
+            'user': 1,
         }
-        # Update the items
-        response = self.client.patch('/api/items/1/', new_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # update the item.
+        new_response = self.client.put('/api/items/1/', new_data,)
+
+        self.assertEqual(new_response.status_code, status.HTTP_200_OK)
         self.assertDictContainsSubset({
             'id': 1,
             'title': new_data['title'],
@@ -112,30 +166,197 @@ class TestItemsAPI(APITestCase):
             'description': new_data['description'],
             'year': new_data['year'],
             'price': new_data['price'],
-        }, response.data)
+        }, new_response.data)
 
-    def test_delete_items(self):
+    def test_update_item_not_belongs_to_user(self):
         """
-        Ensure we can get items.
+        Ensure that only object owners can update the item.
         """
-        self.client.post(
-            '/api/items/',
-            self.with_foreign_props({
-                'title': 'test title',
-                'sold': True,
-                'description': 'test description',
-                'year': 2010,
-                'price': '1200.00',
-            }),
-            format='json'
-        )
+        # first create the item.
+        user1_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user1',
+                'user@kingpaintball.com',
+                'password'
+            ))
 
-        # make sure there is only 1 item.
+        user2_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user2',
+                'user2@kingpaintball.com',
+                'password'
+            ))
+
+        url = '/api/items/'
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+            'user': 1,
+        })
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user1_token}')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = '/api/items/1/'
-        response = self.client.delete(url)
+        new_data = data | {
+            'title': 'new title',
+            'sold': False,
+            'description': 'new description',
+            'year': 2020,
+            'price': '130.00',
+            'user': 1,
+        }
+
+        # update the item.
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user2_token}')
+        new_response = self.client.put('/api/items/1/', new_data,)
+
+        self.assertEqual(new_response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # PATCH
+
+    def test_patch_item_belongs_to_user(self):
+        """
+        Ensure that only object owners can patch the item.
+        """
+        # first create the item.
+        authenticated_user_token = self.create_user(False)
+
+        url = '/api/items/'
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+        })
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f'Token {authenticated_user_token}')
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        new_data = data | {
+            'year': 2020,
+        }
+
+        # update the item.
+        new_response = self.client.patch('/api/items/1/', new_data,)
+
+        self.assertEqual(new_response.status_code, status.HTTP_200_OK)
+        self.assertDictContainsSubset({
+            'year': new_data['year'],
+        }, new_response.data)
+
+    def test_patch_item_not_belongs_to_user(self):
+        """
+        Ensure that non object owners can't update the item.
+        """
+        # first create the item.
+        user1_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user1',
+                'user@kingpaintball.com',
+                'password'
+            ))
+
+        user2_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user2',
+                'user2@kingpaintball.com',
+                'password'
+            ))
+
+        url = '/api/items/'
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+        })
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user1_token}')
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        new_data = data | {
+            'year': 2020,
+        }
+
+        # update the item.
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user2_token}')
+        new_response = self.client.patch('/api/items/1/', new_data,)
+        self.assertEqual(new_response.status_code, status.HTTP_403_FORBIDDEN)
+
+    # DELETE
+
+    def test_delete_item_belongs_to_user(self):
+        """
+        Ensure we can delete items.
+        """
+
+        user_token = self.create_user(False)
+
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+            'user': 1,
+        })
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f'Token {user_token}')
+
+        response = self.client.post('/api/items/', data, format='json')
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.delete('/api/items/1/',)
 
         # make sure there are 0 items.
         self.assertEqual(Item.objects.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_item_not_belongs_to_user(self):
+        """
+        Ensure we can't delete items.
+        """
+
+        user1_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user1',
+                'user@kingpaintball.com',
+                'password'
+            ))
+
+        user2_token = Token.objects.create(
+            user=User.objects.create_user(
+                'user2',
+                'user2@kingpaintball.com',
+                'password'
+            ))
+
+        data = self.with_foreign_props({
+            'title': 'test title',
+            'sold': True,
+            'description': 'test description',
+            'year': 2010,
+            'price': 1200.00,
+        })
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user1_token}')
+
+        response = self.client.post('/api/items/', data, format='json')
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {user2_token}')
+        response = self.client.delete('/api/items/1/',)
+
+        # make sure there are 0 items.
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

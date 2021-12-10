@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework.permissions import (IsAuthenticatedOrReadOnly, IsAdminUser)
 from paintball.permissions import (
-    IsAdmin,
     IsReadOnly,
     IsOwner,
-
+    IsOwnerOrReadOnly,
 )
+
 from paintball.mixins import ReadWriteSerializerMixin
 from paintball.serializers import (
     BrandSerializer,
@@ -28,6 +29,16 @@ from paintball.models import (
     Item,
     Image
 )
+from rest_framework import status
+from rest_framework.response import Response
+from pprint import pprint
+
+
+def with_user(request: dict) -> dict:
+    return {
+        **request.data,
+        **{'user': request.user.id}
+    }
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -38,42 +49,47 @@ class UserViewSet(viewsets.ModelViewSet):
 class BrandViewSet(viewsets.ModelViewSet):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
-    permission_classes = [IsAdmin | IsReadOnly]
+    permission_classes = [IsAdminUser | IsReadOnly]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdmin | IsReadOnly]
+    permission_classes = [IsAdminUser | IsReadOnly]
 
 
 class ConditionViewSet(viewsets.ModelViewSet):
     queryset = Condition.objects.all()
     serializer_class = ConditionSerializer
-    permission_classes = [IsAdmin | IsReadOnly]
+    permission_classes = [IsAdminUser | IsReadOnly]
 
 
 class ItemViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Item.objects.all()
     read_serializer_class = ItemReadSerializer
     write_serializer_class = ItemWriteSerializer
-    permission_classes = [IsAdmin | IsOwner | IsReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    # POST
+    # Will add the user to the object on a post request
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    permission_classes = [IsAdmin | IsReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class CommentViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     read_serializer_class = CommentReadSerializer
     write_serializer_class = CommentWriteSerializer
-    permission_classes = [IsAdmin | IsOwner | IsReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-    permission_classes = [IsAdmin | IsOwner | IsReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]

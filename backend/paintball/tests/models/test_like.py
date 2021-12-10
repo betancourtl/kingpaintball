@@ -1,9 +1,6 @@
 from django.test import TestCase
 from django.db.utils import IntegrityError
 from django.test.utils import setup_databases
-from user.models import (
-    User,
-)
 from paintball.models import (
     Item,
     Like,
@@ -11,6 +8,7 @@ from paintball.models import (
     Brand,
     Category,
     Condition,
+    User,
 )
 
 

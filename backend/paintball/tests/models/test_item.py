@@ -1,14 +1,11 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
-from django.test.utils import setup_databases
-from user.models import (
-    User,
-)
 from paintball.models import (
     Item,
+    User,
     Brand,
     Category,
     Condition,
+    User,
 )
 
 
@@ -23,7 +20,7 @@ class TestItemModel(TestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="webdeveloperpr@gmail.com",
-            name="user",
+            username="user",
             password="123456",
             is_active=True
         )

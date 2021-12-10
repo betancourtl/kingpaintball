@@ -18,4 +18,4 @@
 - like
 - comment
 
-## Add authentication
+## Add Permissions

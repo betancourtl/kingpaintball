@@ -115,7 +115,7 @@ class ImageSerializer(serializers.ModelSerializer):
 class ItemWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-
+        read_only_fields = ['user']
         fields = [
             'id',
             'title',
@@ -125,7 +125,6 @@ class ItemWriteSerializer(serializers.ModelSerializer):
             'price',
             'category',
             'brand',
-            'user',
             'condition',
             'updated_at',
             'created_at'

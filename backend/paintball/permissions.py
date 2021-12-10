@@ -1,4 +1,26 @@
 from rest_framework import permissions
+from rest_framework.authtoken.models import Token
+from pprint import pprint
+SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
+
+# authentication -> populates user and token
+# permissions
+# controller
+# model
+# db
+
+# This only runs on urls that have the following pattern /api/some-path/<id>/
+# If will get you the object by it's id.
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    # This runs on: # GET, PUT, PATCH , DELETE
+    def has_object_permission(self, request, view, obj):
+        # GET, HEAD, OPTION
+        if request.method in SAFE_METHODS:
+            return True
+
+        # POST, PUT, PATCH, DELETE
+        is_object_owner = obj.user == request.user
+        return is_object_owner
 
 
 class IsReadOnly(permissions.BasePermission):
@@ -8,28 +30,4 @@ class IsReadOnly(permissions.BasePermission):
             request.method in permissions.SAFE_METHODS
         )
 
-        print(f'is_read_only: {is_read_only}')
         return is_read_only
-
-
-class IsAdmin(permissions.BasePermission):
-    """The request is authenticated as an admin, or is a read-only request"""
-
-    def has_permission(self, request, view):
-        is_admin = bool(request.user and request.user.is_staff)
-
-        print(f'is_admin: {is_admin}')
-        return is_admin
-
-
-class IsOwner(permissions.BasePermission):
-    """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
-    """
-
-    def has_object_permission(self, request, view, obj):
-    
-        # Instance must have an attribute named `owner`.
-        print('Object Permission')
-        return obj.owner == request.user

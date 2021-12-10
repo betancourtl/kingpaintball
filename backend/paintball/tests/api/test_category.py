@@ -55,8 +55,7 @@ class TestCategoriesAPI(APITestCase):
         """
         Ensure anyone can get categories.
         """
-        category = Category.objects.create(name="marker")
-        token = self.create_user(is_admin=True)
+        Category.objects.create(name="marker")
         url = '/api/categories/1/'
         response = self.client.get(url)
         self.assertDictContainsSubset(
