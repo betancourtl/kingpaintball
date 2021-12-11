@@ -1,5 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
 from paintball.models import (
     Brand,
     Image,
@@ -30,34 +32,42 @@ class UserSerializer(serializers.ModelSerializer):
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
+        read_only_fields = [
+            'id',
+            'updated_at',
+            'created_at',
+        ]
         fields = [
             'id',
             'name',
-            'updated_at',
-            'created_at',
         ]
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
+        read_only_fields = [
+            'id',
+            'updated_at',
+            'created_at',
+        ]
+
         fields = [
             'id',
             'name',
-            'updated_at',
-            'created_at',
         ]
 
 
 class ConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Condition
-        fields = [
+        read_only_fields = [
             'id',
-            'name',
             'updated_at',
             'created_at',
         ]
+
+        fields = ['id', 'name']
 
 
 class CommentReadSerializer(serializers.ModelSerializer):
@@ -65,59 +75,83 @@ class CommentReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
+        read_only_fields = [
+            'id',
+            'user',
+            'updated_at',
+            'created_at',
+        ]
+
         fields = [
             'id',
             'comment',
-            'user',
             'item',
-            'updated_at',
-            'created_at',
+            'user',
         ]
 
 
 class CommentWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
+        read_only_fields = [
+            'id',
+            'user',
+            'updated_at',
+            'created_at',
+        ]
         fields = [
             'id',
             'comment',
-            'user',
             'item',
-            'updated_at',
-            'created_at',
+            'user',
         ]
 
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
-        fields = [
+        read_only_fields = [
             'id',
             'user',
-            'item',
             'updated_at',
             'created_at',
+        ]
+        fields = [
+            'id',
+            'item',
+            'user'
         ]
 
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
+        read_only_fields = [
+            'id',
+            'updated_at',
+            'created_at',
+        ]
+
         fields = [
             'id',
             'image',
             'item',
-            'updated_at',
-            'created_at',
         ]
 
 
 class ItemWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        read_only_fields = ['user']
+        read_only_fields = [
+            'id',
+            'user',
+            'updated_at',
+            'created_at',
+        ]
+
         fields = [
             'id',
+            'user',
             'title',
             'sold',
             'description',
@@ -126,8 +160,6 @@ class ItemWriteSerializer(serializers.ModelSerializer):
             'category',
             'brand',
             'condition',
-            'updated_at',
-            'created_at'
         ]
 
 
@@ -143,8 +175,16 @@ class ItemReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
 
+        read_only_fields = [
+            'id',
+            'user',
+            'updated_at',
+            'created_at',
+        ]
+
         fields = [
             'id',
+            'user',
             'title',
             'sold',
             'description',
@@ -152,11 +192,8 @@ class ItemReadSerializer(serializers.ModelSerializer):
             'price',
             'category',
             'brand',
-            'user',
             'images',
             'likes',
             'comments',
             'condition',
-            'updated_at',
-            'created_at'
         ]

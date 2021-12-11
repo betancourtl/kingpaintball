@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly, IsAdminUser)
 from paintball.permissions import (
     IsReadOnly,
     IsOwnerOrReadOnly,
 )
-
 from paintball.mixins import ReadWriteSerializerMixin
 from paintball.serializers import (
     BrandSerializer,
@@ -28,9 +29,6 @@ from paintball.models import (
     Item,
     Image
 )
-from rest_framework import status
-from rest_framework.response import Response
-from pprint import pprint
 
 
 def with_user(request: dict) -> dict:
@@ -80,6 +78,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class CommentViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -87,8 +88,22 @@ class CommentViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     write_serializer_class = CommentWriteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def update(self, request, pk=None):
+        response = {'message': 'Update function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
+        response = {'message': 'Update function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
