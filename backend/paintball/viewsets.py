@@ -60,6 +60,14 @@ class ItemViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
     queryset = Item.objects.all()
     read_serializer_class = ItemReadSerializer
     write_serializer_class = ItemWriteSerializer
+    filterset_fields = [
+        'sold',
+        'year',
+        'price',
+        'category',
+        'brand',
+        'condition',
+    ]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     # POST

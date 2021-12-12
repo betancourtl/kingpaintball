@@ -12,7 +12,6 @@ from paintball.models import (
     Item,
 )
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

@@ -25,6 +25,6 @@ from django.conf import settings
 urlpatterns = [
     path(r'api/', include('paintball.urls')),
     path(r'admin/', admin.site.urls),
-    path(r'api-token-auth/', views.obtain_auth_token, name="api-token-auth"),
+    path(r'token/', views.obtain_auth_token, name="api-token-auth"),
     path(r'api-auth/', include('rest_framework.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
