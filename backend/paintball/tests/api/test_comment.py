@@ -287,7 +287,7 @@ class TestCommentsAPI(APITestCase):
         self.assertEqual(Comment.objects.count(), 0)
         self.assertEqual(new_response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def xtest_delete_comment_not_belongs_to_user(self):
+    def test_delete_comment_not_belongs_to_user(self):
         """
         Ensure we can't delete comments.
         """

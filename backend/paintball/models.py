@@ -2,7 +2,35 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Brand(models.Model):
+class TimeStampMixin(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class Brand(TimeStampMixin):
+    name = models.CharField(max_length=25, blank=True, default='', unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Category(TimeStampMixin):
+    name = models.CharField(max_length=25, blank=True, default='', unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Condition(TimeStampMixin):
     name = models.CharField(max_length=25, blank=True, default='', unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -14,31 +42,7 @@ class Brand(models.Model):
         ordering = ['name']
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=25, blank=True, default='', unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name']
-
-
-class Condition(models.Model):
-    name = models.CharField(max_length=25, blank=True, default='', unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name']
-
-
-class Item(models.Model):
+class Item(TimeStampMixin):
     title = models.CharField(max_length=255, blank=True, default='')
     sold = models.BooleanField(default=False)
     description = models.TextField(blank=True, default='')
@@ -49,8 +53,6 @@ class Item(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -59,20 +61,20 @@ class Item(models.Model):
         ordering = ['created_at']
 
 
-class Image(models.Model):
+class Image(TimeStampMixin):
     # fk's
-    image = models.ImageField(upload_to='images', default='images/default.png')
+    image = models.ImageField(
+        upload_to='uploads', default='images/default.png')
     # the viewset can now add images to the fields array to get all the images
     # for an item.
     item = models.ForeignKey(
-        Item, related_name="images",
+        Item,
+        related_name="images",
         on_delete=models.CASCADE
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
 
-class Like(models.Model):
+class Like(TimeStampMixin):
     item = models.ForeignKey(
         Item,
         related_name="likes",
@@ -83,8 +85,6 @@ class Like(models.Model):
         related_name="likes",
         on_delete=models.CASCADE
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.item
@@ -94,13 +94,11 @@ class Like(models.Model):
         ordering = ['item']
 
 
-class Comment(models.Model):
+class Comment(TimeStampMixin):
     comment = models.TextField(blank=False)
     item = models.ForeignKey(
         Item, related_name="comments", on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.comment)[:50]

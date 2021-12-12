@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
-from django.test.utils import setup_databases
 from paintball.models import (
     Image,
     Item,
@@ -14,7 +12,7 @@ from paintball.models import (
 class TestImageModel(TestCase):
     """ Test module for Image model """
 
-    def test_image(self):
+    def test_create_image(self):
         """Test that an image gets created and that it belogs to item
         """
         category1 = Category.objects.create(name="marker")

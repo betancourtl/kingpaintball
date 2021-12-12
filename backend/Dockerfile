@@ -21,4 +21,11 @@ COPY . /app
 
 # User
 RUN adduser --disabled-password --gecos '' user
+
+RUN mkdir -p /vol/web/media
+RUN mkdir -p /vol/web/images
+RUN chown -R user.user /vol/
+RUN chmod -R 755 /vol/web
+
+# Change to user
 USER user

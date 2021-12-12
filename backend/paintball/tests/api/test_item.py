@@ -6,11 +6,8 @@ from paintball.models import (
     Category,
     Condition,
     Item,
-    Image,
-    Like,
     User,
 )
-from pprint import pprint
 
 
 class TestItemsAPI(APITestCase):

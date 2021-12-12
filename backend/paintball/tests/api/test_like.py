@@ -65,6 +65,7 @@ class TestLikesAPI(APITestCase):
         self.assertEqual(Like.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+
     def test_unauthenticated_user_not_create_like(self):
         """
         Ensure unauthenticated users can't create like.

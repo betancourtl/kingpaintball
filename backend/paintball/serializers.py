@@ -125,6 +125,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
+
         model = Image
         read_only_fields = [
             'id',

@@ -6,6 +6,7 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly, IsAdminUser)
 from paintball.permissions import (
     IsReadOnly,
     IsOwnerOrReadOnly,
+    IsImageOwnerOrReadOnly
 )
 from paintball.mixins import ReadWriteSerializerMixin
 from paintball.serializers import (
@@ -31,16 +32,10 @@ from paintball.models import (
 )
 
 
-def with_user(request: dict) -> dict:
-    return {
-        **request.data,
-        **{'user': request.user.id}
-    }
-
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
 
 
 class BrandViewSet(viewsets.ModelViewSet):
@@ -76,10 +71,37 @@ class ItemViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsImageOwnerOrReadOnly]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # check user owns the item.
+        item_id = request.data.get('item', None)
+        item = Item.objects.get(pk=item_id)
+
+        if not item:
+            response = {'message': 'Item does not exist'}
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+
+        is_owner = item.user == self.request.user
+
+        if not is_owner:
+            response = {'message': 'User does not own the item'}
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, pk=None):
+        response = {'message': 'Update function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
+        response = {'message': 'Update function is not offered in this path.'}
+        return Response(response, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class CommentViewSet(ReadWriteSerializerMixin, viewsets.ModelViewSet):
