@@ -6,8 +6,10 @@ from paintball.models import (
     Category,
     Condition,
     Item,
-    User,
 )
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TestItemsAPI(APITestCase):
@@ -27,13 +29,11 @@ class TestItemsAPI(APITestCase):
     def create_user(self, is_admin=False):
         if is_admin:
             user = User.objects.create_superuser(
-                'admin',
                 'admin@kingpaintball.com',
                 'password'
             )
         else:
             user = User.objects.create_user(
-                'user',
                 'user@kingpaintball.com',
                 'password'
             )
@@ -86,7 +86,6 @@ class TestItemsAPI(APITestCase):
         """
 
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -172,14 +171,12 @@ class TestItemsAPI(APITestCase):
         # first create the item.
         user1_token = Token.objects.create(
             user=User.objects.create_user(
-                'user1',
                 'user@kingpaintball.com',
                 'password'
             ))
 
         user2_token = Token.objects.create(
             user=User.objects.create_user(
-                'user2',
                 'user2@kingpaintball.com',
                 'password'
             ))
@@ -255,14 +252,12 @@ class TestItemsAPI(APITestCase):
         # first create the item.
         user1_token = Token.objects.create(
             user=User.objects.create_user(
-                'user1',
                 'user@kingpaintball.com',
                 'password'
             ))
 
         user2_token = Token.objects.create(
             user=User.objects.create_user(
-                'user2',
                 'user2@kingpaintball.com',
                 'password'
             ))
@@ -326,14 +321,12 @@ class TestItemsAPI(APITestCase):
 
         user1_token = Token.objects.create(
             user=User.objects.create_user(
-                'user1',
                 'user@kingpaintball.com',
                 'password'
             ))
 
         user2_token = Token.objects.create(
             user=User.objects.create_user(
-                'user2',
                 'user2@kingpaintball.com',
                 'password'
             ))

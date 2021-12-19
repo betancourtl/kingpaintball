@@ -1,14 +1,13 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
-from django.test.utils import setup_databases
 from paintball.models import (
     Item,
     Brand,
     Comment,
     Category,
     Condition,
-    User,
 )
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class TestCommentModel(TestCase):
@@ -22,7 +21,6 @@ class TestCommentModel(TestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="webdeveloperpr@gmail.com",
-            username="user",
             password="123456",
             is_active=True
         )

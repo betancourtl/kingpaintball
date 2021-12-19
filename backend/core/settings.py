@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_filters',
     # My Apps
     'core',
+    'user',
     'paintball',
 ]
 
@@ -99,6 +100,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'user.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
