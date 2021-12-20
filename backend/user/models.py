@@ -1,14 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from user.managers import UserManager
+from django.utils import timezone
+from datetime import timedelta
+
+
+SESSION_TOKEN_EXPIRATION = 15
+VERIFIACTION_TOKEN_EXPIRATION = 15
+
+
+def session_expiration_datetime(time_zone):
+    if time_zone:
+        return time_zone + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
+
+    return timezone.now() + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
+
+
+def verification_token_expiration_datetime(time_zone):
+    if time_zone:
+        return time_zone + timedelta(minutes=VERIFIACTION_TOKEN_EXPIRATION)
+
+    return timezone.now() + timedelta(minutes=VERIFIACTION_TOKEN_EXPIRATION)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """The User model is for information such as the user's name and email 
-    address. If a user first signs in with OAuth then their email address is 
+    """The User model is for information such as the user's name and email
+    address. If a user first signs in with OAuth then their email address is
     automatically populated using the one from their OAuth profile, if the OAuth
     provider returns one.
 
@@ -55,9 +74,9 @@ class Account(models.Model):
     provider = models.CharField(max_length=255)
     providerAccountId = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255)
-    access_token = models.CharField(max_length=255)
-    expires_at = models.CharField(max_length=255)
-    token_type = models.CharField(max_length=255)
+    access_token = models.CharField(max_length=255, null=True)
+    expires_at = models.IntegerField(null=True)
+    token_type = models.CharField(max_length=255, null=True)
     scope = models.CharField(max_length=255)
     id_token = models.CharField(max_length=255)
     oauth_token_secret = models.CharField(max_length=255)
@@ -71,7 +90,7 @@ class Session(models.Model):
     The Session model is used for database sessions. It is not used if
     JSON Web Tokens are enabled.
     """
-    expires = models.DateTimeField(auto_now=True)
+    expires = models.DateTimeField(default=session_expiration_datetime)
     session_token = models.CharField(
         max_length=255,
         unique=True,
@@ -83,9 +102,10 @@ class Session(models.Model):
 class VerificationToken(models.Model):
     """
     The Verification Token model is used to store tokens for passwordless sign in.
-    A single User can have multiple open Verification Tokens (e.g. to sign in 
+    A single User can have multiple open Verification Tokens (e.g. to sign in
     to different devices).
     """
     token = models.CharField(max_length=255, unique=True, db_index=True)
-    expires = models.DateTimeField(auto_now=True)
+    expires = models.DateTimeField(
+        default=verification_token_expiration_datetime)
     identifier = models.CharField(max_length=255)

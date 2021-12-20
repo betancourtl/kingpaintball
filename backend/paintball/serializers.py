@@ -11,22 +11,10 @@ from paintball.models import (
     Comment,
     Item,
 )
+from user.serializers import (
+    UserSerializer
+)
 User = get_user_model()
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
-        # fields = [
-        #     'id',
-        #     'email',
-        #     'first_name',
-        #     'last_name',
-        #     'password',
-        #     'is_staff',
-        #     'is_active'
-        # ]
 
 
 class BrandSerializer(serializers.ModelSerializer):
