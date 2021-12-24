@@ -6,7 +6,6 @@ from user.managers import UserManager
 from django.utils import timezone
 from datetime import timedelta
 
-
 SESSION_TOKEN_EXPIRATION = 15
 VERIFIACTION_TOKEN_EXPIRATION = 15
 

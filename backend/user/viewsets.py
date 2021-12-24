@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.response import Response
 from user.models import (
     User,
     Account,
     Session,
     VerificationToken,
 )
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from user.serializers import (
     UserSerializer,
@@ -17,25 +16,25 @@ from user.serializers import (
 )
 
 
-class UserViewset(viewsets.ViewSet):
+class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class AccountViewset(viewsets.ViewSet):
+class AccountViewset(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class SessionViewset(viewsets.ViewSet):
+class SessionViewset(viewsets.ModelViewSet):
     queryset = Session.objects.all()
     serializer_class = SessionSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class VerificationTokenViewset(viewsets.ViewSet):
+class VerificationTokenViewset(viewsets.ModelViewSet):
     queryset = VerificationToken.objects.all()
     serializer_class = VerificationTokenSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly]
