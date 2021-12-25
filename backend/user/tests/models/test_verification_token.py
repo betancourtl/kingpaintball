@@ -13,7 +13,8 @@ class TestVerificationTokenModel(TestCase):
 
         vt = VerificationToken.objects.create(
             token='vt',
-            expires=verification_token_expiration_datetime(time_zone),
+            expires=verification_token_expiration_datetime(
+                time_zone=time_zone),
             identifier='identifier'
         )
 

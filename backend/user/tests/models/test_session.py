@@ -21,7 +21,7 @@ class TestSessionModel(TestCase):
 
         session = Session.objects.create(
             session_token='session_token',
-            expires=session_expiration_datetime(time_zone),
+            expires=session_expiration_datetime(time_zone=time_zone),
             userId=user
         )
 

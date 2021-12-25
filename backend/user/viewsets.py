@@ -29,13 +29,13 @@ class UserViewset(viewsets.ModelViewSet):
 class AccountViewset(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
 
 
 class SessionViewset(viewsets.ModelViewSet):
     queryset = Session.objects.all()
     serializer_class = SessionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
 
 
 class VerificationTokenViewset(viewsets.ModelViewSet):
