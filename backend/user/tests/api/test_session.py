@@ -1,17 +1,18 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 from user.models import (
     User,
     Session,
 )
 
 
-class TestSessionAPI(TestCase):
+class TestSessionAPI(APITestCase):
     # POST
     def test_create_session(self):
-        "Create session"
+        """Create session"""
         pass
 
     # GET
+
     def test_get_session(self):
         "Get session"
         pass

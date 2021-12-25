@@ -10,14 +10,14 @@ SESSION_TOKEN_EXPIRATION = 15
 VERIFIACTION_TOKEN_EXPIRATION = 15
 
 
-def session_expiration_datetime(time_zone):
+def session_expiration_datetime(time_zone=None):
     if time_zone:
         return time_zone + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
 
     return timezone.now() + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
 
 
-def verification_token_expiration_datetime(time_zone):
+def verification_token_expiration_datetime(time_zone=None):
     if time_zone:
         return time_zone + timedelta(minutes=VERIFIACTION_TOKEN_EXPIRATION)
 
