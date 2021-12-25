@@ -60,6 +60,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.email
 
@@ -83,6 +86,9 @@ class Account(models.Model):
     session_state = models.CharField(max_length=255)
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Session(models.Model):
     """
@@ -97,6 +103,9 @@ class Session(models.Model):
     )
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-id']
+
 
 class VerificationToken(models.Model):
     """
@@ -108,3 +117,6 @@ class VerificationToken(models.Model):
     expires = models.DateTimeField(
         default=verification_token_expiration_datetime)
     identifier = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['-id']

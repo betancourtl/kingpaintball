@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from django.shortcuts import render
 from rest_framework import viewsets
 from user.models import (
@@ -19,7 +20,10 @@ from user.serializers import (
 class UserViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
+    filterset_fields = [
+        'email',
+    ]
 
 
 class AccountViewset(viewsets.ModelViewSet):

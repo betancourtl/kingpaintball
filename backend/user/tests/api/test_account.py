@@ -1,15 +1,15 @@
-from django.test import TestCase
-from user.models import Account
-from django.contrib.auth import get_account_model
+from rest_framework.test import APITestCase
+from user.models import (
+    User,
+    Account,
+)
 
-User = get_account_model()
 
-
-class TestAccountAPI(TestCase):
+class TestAccountAPI(APITestCase):
 
     # POST
     def test_create_account(self):
-        "Create user"
+        """Create user"""
         pass
 
     # GET

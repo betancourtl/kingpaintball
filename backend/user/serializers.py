@@ -7,9 +7,9 @@ from user.models import(
 )
 
 
-class UserSerializer(serializers.Serializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = User        
         read_only_fields = [
             'password',
             'email_verified'
@@ -17,19 +17,19 @@ class UserSerializer(serializers.Serializer):
         fields = '__all__'
 
 
-class AccountSerializer(serializers.Serializer):
+class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
 
 
-class SessionSerializer(serializers.Serializer):
+class SessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
         fields = '__all__'
 
 
-class VerificationTokenSerializer(serializers.Serializer):
+class VerificationTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerificationToken
         fields = '__all__'
