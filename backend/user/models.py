@@ -4,24 +4,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from user.managers import UserManager
 from django.utils import timezone
-from datetime import timedelta
-
-SESSION_TOKEN_EXPIRATION = 15
-VERIFIACTION_TOKEN_EXPIRATION = 15
-
-
-def session_expiration_datetime(time_zone=None):
-    if time_zone:
-        return time_zone + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
-
-    return timezone.now() + timedelta(minutes=SESSION_TOKEN_EXPIRATION)
-
-
-def verification_token_expiration_datetime(time_zone=None):
-    if time_zone:
-        return time_zone + timedelta(minutes=VERIFIACTION_TOKEN_EXPIRATION)
-
-    return timezone.now() + timedelta(minutes=VERIFIACTION_TOKEN_EXPIRATION)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -75,15 +57,18 @@ class Account(models.Model):
     type = models.CharField(max_length=255)
     provider = models.CharField(max_length=255)
     providerAccountId = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255)
-    access_token = models.CharField(max_length=255, null=True)
+    refresh_token = models.CharField(max_length=255, blank=True)
+    # used by github
+    refresh_token_expires_in = models.IntegerField(null=True)
+    access_token = models.CharField(max_length=255, blank=True)
     expires_at = models.IntegerField(null=True)
-    token_type = models.CharField(max_length=255, null=True)
-    scope = models.CharField(max_length=255)
-    id_token = models.CharField(max_length=255)
-    oauth_token_secret = models.CharField(max_length=255)
-    oauth_token = models.CharField(max_length=255)
-    session_state = models.CharField(max_length=255)
+    token_type = models.CharField(max_length=255, blank=True)
+    scope = models.CharField(max_length=255, blank=True)
+    # used by google
+    id_token = models.CharField(max_length=2000, blank=True)
+    oauth_token_secret = models.CharField(max_length=255, blank=True)
+    oauth_token = models.CharField(max_length=255, blank=True)
+    session_state = models.CharField(max_length=255, blank=True)
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -95,7 +80,7 @@ class Session(models.Model):
     The Session model is used for database sessions. It is not used if
     JSON Web Tokens are enabled.
     """
-    expires = models.DateTimeField(default=session_expiration_datetime)
+    expires = models.DateTimeField()
     session_token = models.CharField(
         max_length=255,
         unique=True,
@@ -114,8 +99,7 @@ class VerificationToken(models.Model):
     to different devices).
     """
     token = models.CharField(max_length=255, unique=True, db_index=True)
-    expires = models.DateTimeField(
-        default=verification_token_expiration_datetime)
+    expires = models.DateTimeField()
     identifier = models.CharField(max_length=255)
 
     class Meta:

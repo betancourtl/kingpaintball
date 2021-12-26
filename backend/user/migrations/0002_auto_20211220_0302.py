@@ -29,11 +29,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='session',
             name='expires',
-            field=models.DateTimeField(default=user.models.session_expiration_datetime),
+            field=models.DateTimeField(),
         ),
         migrations.AlterField(
             model_name='verificationtoken',
             name='expires',
-            field=models.DateTimeField(default=user.models.verification_token_expiration_datetime),
+            field=models.DateTimeField(),
         ),
     ]

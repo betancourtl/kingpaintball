@@ -30,12 +30,19 @@ class AccountViewset(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     permission_classes = []
+    filterset_fields = [
+        'provider',
+        'providerAccountId',
+    ]
 
 
 class SessionViewset(viewsets.ModelViewSet):
     queryset = Session.objects.all()
     serializer_class = SessionSerializer
     permission_classes = []
+    filterset_fields = [
+        'session_token',
+    ]
 
 
 class VerificationTokenViewset(viewsets.ModelViewSet):

@@ -2,7 +2,6 @@ from django.test import TestCase
 from user.models import (
     User,
     Session,
-    session_expiration_datetime
 )
 from django.utils import timezone
 
@@ -21,7 +20,6 @@ class TestSessionModel(TestCase):
 
         session = Session.objects.create(
             session_token='session_token',
-            expires=session_expiration_datetime(time_zone=time_zone),
             userId=user
         )
 

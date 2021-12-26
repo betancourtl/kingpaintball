@@ -1,7 +1,16 @@
+import axios from 'axios'
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
+import DRFAdapter from '../../../adapter/DRFAdapter';
+
+const client = axios.create({
+    baseURL: 'http://backend:8000/api/',
+    headers: {
+        'Accept': 'application/json'
+    }
+});
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -27,6 +36,7 @@ export default NextAuth({
     // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
     // a separate secret is defined explicitly for encrypting the JWT.
     secret: process.env.SECRET,
+    adapter: DRFAdapter(client),
     session: {
         // Use JSON Web Tokens for session instead of database sessions.
         // This option can be used with or without a database for users/accounts.
@@ -34,12 +44,12 @@ export default NextAuth({
         strategy: "jwt",
 
         // Seconds - How long until an idle session expires and is no longer valid.
-        // maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 60 * 60 * 1, // 1 hour
 
         // Seconds - Throttle how frequently to write to database to extend a session.
         // Use it to limit write operations. Set to 0 to always update the database.
         // Note: This option is ignored if using JSON Web Tokens
-        // updateAge: 24 * 60 * 60, // 24 hours
+        updateAge: 60 * 15, // 15 minutes
     },
 
     // JSON Web tokens are only used for sessions if the `jwt: true` session
@@ -86,5 +96,5 @@ export default NextAuth({
     },
 
     // Enable debug messages in the console if you are having problems
-    debug: false,
+    debug: true,
 })
