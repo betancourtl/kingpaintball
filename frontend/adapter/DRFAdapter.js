@@ -58,7 +58,7 @@ export default function DRFAdapter(client, options = {}) {
 
                 const { data: userData } = await client.get(`users/${account.userId}/`)
 
-                return userData.id ? userData : null
+                return userData
 
             } catch (err) {
                 console.log('getUserByAccount', err)
@@ -66,7 +66,7 @@ export default function DRFAdapter(client, options = {}) {
         },
         async updateUser(user) {
             try {
-                const { data } = await client.patch(`users/${user.id}`, { user })
+                const { data } = await client.patch(`users/${user.id}/`, user)
                 return data;
             } catch (err) {
                 console.log('updateUser')
@@ -74,7 +74,7 @@ export default function DRFAdapter(client, options = {}) {
         },
         async deleteUser(userId) {
             try {
-                await client.delete(`users/${user.id}/`)
+                await client.delete(`users/${userId}/`)
                 return
             } catch (err) {
                 console.log('deleteUser')
@@ -97,14 +97,12 @@ export default function DRFAdapter(client, options = {}) {
                     }
                 })
 
-                if (!accountData) return null
+                if (accountData.count == 0) return null
 
-                await client.delete('/accounts/', {
-                    params: {
-                        id: accountData.id,
-                    }
-                })
-                return
+                const account = accountData.results[0];
+
+                await client.delete(`/accounts/${account.id}/`)
+
             } catch (err) {
                 console.log('unlinkAccount')
             }
@@ -114,7 +112,7 @@ export default function DRFAdapter(client, options = {}) {
                 const { data: sessionData } = await client.post(`sessions/`, {
                     session_token: sessionToken,
                     userId: userId,
-                    expires: expires.toJSON(),
+                    expires: expires,
                 })
 
                 return to_session(sessionData);
@@ -207,9 +205,11 @@ export default function DRFAdapter(client, options = {}) {
                     }
                 })
 
-                if (vtData.count !== 1) return null
+                if (vtData.count == 0) return null
 
-                await client.delete(`verification-tokens/${vtData.id}`)
+                const vt = vtData.results[0]
+
+                await client.delete(`verification-tokens/${vt.id}/`)
 
                 return vtData
             } catch (err) {

@@ -41,7 +41,7 @@ export default NextAuth({
         // Use JSON Web Tokens for session instead of database sessions.
         // This option can be used with or without a database for users/accounts.
         // Note: `strategy` should be set to 'jwt' if no database is used.
-        strategy: "jwt",
+        strategy: "database",
 
         // Seconds - How long until an idle session expires and is no longer valid.
         maxAge: 60 * 60 * 1, // 1 hour
@@ -81,8 +81,14 @@ export default NextAuth({
     callbacks: {
         // async signIn({ user, account, profile, email, credentials }) { return true },
         // async redirect({ url, baseUrl }) { return baseUrl },
-        // async session({ session, token, user }) { return session },
-        // async jwt({ token, user, account, profile, isNewUser }) { return token }
+        async session({ session, token, user }) {
+            return {
+                ...session,
+                auth: user,
+                token,
+            }
+        },
+        async jwt({ token, user, account, profile, isNewUser }) { return token }
     },
 
     // Events are useful for logging

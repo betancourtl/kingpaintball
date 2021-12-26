@@ -49,3 +49,7 @@ class VerificationTokenViewset(viewsets.ModelViewSet):
     queryset = VerificationToken.objects.all()
     serializer_class = VerificationTokenSerializer
     permission_classes = []
+    filterset_fields = [
+        'identifier',
+        'token'
+    ]
