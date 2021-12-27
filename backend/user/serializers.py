@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         read_only_fields = [
             'password',
-            'email_verified'
+            # 'email_verified'
         ]
         fields = '__all__'
 

@@ -1,7 +1,8 @@
-function Items({ Component, pageProps }) {
+
+function DetailItem({ Component, pageProps }) {
     return <div>
         <p>Items id</p>
     </div>
 }
 
-export default Items
+export default DetailItem

@@ -1,16 +1,10 @@
-import axios from 'axios'
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
 import DRFAdapter from '../../../adapter/DRFAdapter';
+import client from '../../utils/client'
 
-const client = axios.create({
-    baseURL: 'http://backend:8000/api/',
-    headers: {
-        'Accept': 'application/json'
-    }
-});
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -41,7 +35,7 @@ export default NextAuth({
         // Use JSON Web Tokens for session instead of database sessions.
         // This option can be used with or without a database for users/accounts.
         // Note: `strategy` should be set to 'jwt' if no database is used.
-        strategy: "database",
+        strategy: "jwt",
 
         // Seconds - How long until an idle session expires and is no longer valid.
         maxAge: 60 * 60 * 1, // 1 hour
@@ -78,18 +72,8 @@ export default NextAuth({
     // Callbacks are asynchronous functions you can use to control what happens
     // when an action is performed.
     // https://next-auth.js.org/configuration/callbacks
-    callbacks: {
-        // async signIn({ user, account, profile, email, credentials }) { return true },
-        // async redirect({ url, baseUrl }) { return baseUrl },
-        async session({ session, token, user }) {
-            return {
-                ...session,
-                auth: user,
-                token,
-            }
-        },
-        async jwt({ token, user, account, profile, isNewUser }) { return token }
-    },
+    // callbacks: {
+    // },
 
     // Events are useful for logging
     // https://next-auth.js.org/configuration/events

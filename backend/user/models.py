@@ -74,6 +74,9 @@ class Account(models.Model):
     class Meta:
         ordering = ['-id']
 
+    def __str__(self):
+        return self.provider
+
 
 class Session(models.Model):
     """
@@ -91,6 +94,9 @@ class Session(models.Model):
     class Meta:
         ordering = ['-id']
 
+    def __str__(self):
+        return self.session_token
+
 
 class VerificationToken(models.Model):
     """
@@ -104,3 +110,6 @@ class VerificationToken(models.Model):
 
     class Meta:
         ordering = ['-id']
+
+    def __str__(self):
+        return self.token
