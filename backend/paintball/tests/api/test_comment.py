@@ -6,9 +6,11 @@ from paintball.models import (
     Category,
     Condition,
     Comment,
-    User,
     Item,
 )
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TestCommentsAPI(APITestCase):
@@ -19,7 +21,6 @@ class TestCommentsAPI(APITestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="test@kingpaintball.com",
-            username="test",
             password="password",
             is_active=True
         )
@@ -41,13 +42,11 @@ class TestCommentsAPI(APITestCase):
     def create_user(self, is_admin=False):
         if is_admin:
             user = User.objects.create_superuser(
-                'admin',
                 'admin@kingpaintball.com',
                 'password'
             )
         else:
             user = User.objects.create_user(
-                'user',
                 'user@kingpaintball.com',
                 'password'
             )
@@ -149,13 +148,11 @@ class TestCommentsAPI(APITestCase):
         """
         # first create the comment.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
@@ -191,7 +188,6 @@ class TestCommentsAPI(APITestCase):
         """
         # first create the comment.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
@@ -226,13 +222,11 @@ class TestCommentsAPI(APITestCase):
         """
         # first create the comment.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
@@ -265,7 +259,6 @@ class TestCommentsAPI(APITestCase):
         """
 
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
@@ -293,13 +286,11 @@ class TestCommentsAPI(APITestCase):
         """
 
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )

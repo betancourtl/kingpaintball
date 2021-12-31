@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -30,12 +30,7 @@ from paintball.models import (
     Item,
     Image
 )
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+User = get_user_model()
 
 
 class BrandViewSet(viewsets.ModelViewSet):

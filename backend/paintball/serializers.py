@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,21 +11,10 @@ from paintball.models import (
     Comment,
     Item,
 )
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
-        # fields = [
-        #     'id',
-        #     'username',
-        #     'email',
-        #     'first_name',
-        #     'last_name',
-        #     'password',
-        #     'is_staff',
-        #     'is_active'
-        # ]
+from user.serializers import (
+    UserSerializer
+)
+User = get_user_model()
 
 
 class BrandSerializer(serializers.ModelSerializer):

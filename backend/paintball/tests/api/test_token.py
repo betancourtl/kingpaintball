@@ -1,14 +1,8 @@
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from paintball.models import (
-    Brand,
-    Category,
-    Condition,
-    Like,
-    User,
-    Item,
-)
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TestTokenClass(APITestCase):
@@ -16,14 +10,13 @@ class TestTokenClass(APITestCase):
     def test_post_token_with_valid_credentials(self):
         """Test that user can get their token"""
 
-        user = User.objects.create_user(
-            'user',
+        User.objects.create_user(
             'user@kingpaintball.com',
-            'password'
+            'password',
         )
 
         response = self.client.post('/token/', {
-            'username': 'user',
+            'username': 'user@kingpaintball.com',
             'password': 'password'
         })
 
@@ -33,14 +26,13 @@ class TestTokenClass(APITestCase):
     def test_post_token_with_invalid_credentials(self):
         """Test that user can get their token"""
 
-        user = User.objects.create_user(
-            'user',
+        User.objects.create_user(
             'user@kingpaintball.com',
             'password'
         )
 
         response = self.client.post('/token/', {
-            'username': 'none',
+            'username': 'test@kingpaintball.com',
             'password': 'password'
         })
 

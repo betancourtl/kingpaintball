@@ -26,8 +26,10 @@ SECRET_KEY = 'foc*xx&fg1_)*gk&xjmpg#-)g#@^jq*hu(w2t0a-$zp5@r9_(m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
 
+# CORS RULES
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -38,19 +40,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third-Party Apps
+    # DRF apps
     'rest_framework',
     'rest_framework.authtoken',
+    # Third party apps
     'corsheaders',
     'django_filters',
     # My Apps
     'core',
+    'user',
     'paintball',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -99,6 +100,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'user.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -124,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 

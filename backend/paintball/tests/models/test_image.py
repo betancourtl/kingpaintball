@@ -5,8 +5,9 @@ from paintball.models import (
     Brand,
     Category,
     Condition,
-    User,
 )
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class TestImageModel(TestCase):
@@ -20,7 +21,6 @@ class TestImageModel(TestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="webdeveloperpr@gmail.com",
-            username="user",
             password="123456",
             is_active=True
         )

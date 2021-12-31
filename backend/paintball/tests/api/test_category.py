@@ -3,8 +3,9 @@ from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from paintball.models import (
     Category,
-    User
 )
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class TestCategoriesAPI(APITestCase):
@@ -12,13 +13,11 @@ class TestCategoriesAPI(APITestCase):
     def create_user(self, is_admin=False):
         if is_admin:
             user = User.objects.create_superuser(
-                'admin',
                 'admin@kingpaintball.com',
                 'password'
             )
         else:
             user = User.objects.create_user(
-                'user',
                 'user@kingpaintball.com',
                 'password'
             )

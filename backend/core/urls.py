@@ -19,11 +19,11 @@ from django.contrib import admin
 from rest_framework.authtoken import views
 from django.conf.urls.static import static
 from django.conf import settings
+from core.router.app_router import router
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
+
 urlpatterns = [
-    path(r'api/', include('paintball.urls')),
+    path(r'api/', include(router.urls)),
     path(r'admin/', admin.site.urls),
     path(r'token/', views.obtain_auth_token, name="api-token-auth"),
     path(r'api-auth/', include('rest_framework.urls')),

@@ -1,3 +1,5 @@
+import shutil
+from django.test import override_settings
 import tempfile
 from PIL import Image as PilImage
 from rest_framework import status
@@ -7,12 +9,12 @@ from paintball.models import (
     Brand,
     Category,
     Condition,
-    User,
     Item,
     Image,
 )
-from django.test import override_settings
-import shutil
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 TEST_DIR = 'test_data'
 
@@ -33,7 +35,6 @@ class TestImagesAPI(APITestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = user or User.objects.create(
             email="test@kingpaintball.com",
-            username="test",
             password="password",
             is_active=True
         )
@@ -59,7 +60,6 @@ class TestImagesAPI(APITestCase):
         Ensure user can create images.
         """
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -92,13 +92,11 @@ class TestImagesAPI(APITestCase):
         Ensure users who don't own an item can't create an image
         """
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
@@ -160,7 +158,6 @@ class TestImagesAPI(APITestCase):
         """
 
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -199,7 +196,6 @@ class TestImagesAPI(APITestCase):
         Ensure that only object owners can update the image.
         """
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -251,7 +247,6 @@ class TestImagesAPI(APITestCase):
         Ensure that only object owners can patch the image.
         """
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -303,7 +298,6 @@ class TestImagesAPI(APITestCase):
         """
 
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -342,13 +336,11 @@ class TestImagesAPI(APITestCase):
         """
 
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user@kingpaintball.com',
             'password'
         )

@@ -1,6 +1,6 @@
 import Layout from '../components/layout'
 
-export default function Page () {
+export default function Page() {
   return (
     <Layout>
       <h1>API Example</h1>
@@ -8,10 +8,18 @@ export default function Page () {
       <p><em>You must be signed in to see responses.</em></p>
       <h2>Session</h2>
       <p>/api/examples/session</p>
-      <iframe src="/api/examples/session"/>
+      <iframe style={{
+        width: '600px;',
+        height: '250px;',
+      }}
+        src="/api/examples/session" />
       <h2>JSON Web Token</h2>
       <p>/api/examples/jwt</p>
-      <iframe src="/api/examples/jwt"/>
+      <iframe style={{
+        width: '600px;',
+        height: '250px;',
+      }}
+        src="/api/examples/jwt" />
     </Layout>
   )
 }

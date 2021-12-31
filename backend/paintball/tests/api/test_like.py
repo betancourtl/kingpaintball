@@ -6,9 +6,11 @@ from paintball.models import (
     Category,
     Condition,
     Like,
-    User,
     Item,
 )
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 
 class TestLikesAPI(APITestCase):
@@ -19,7 +21,6 @@ class TestLikesAPI(APITestCase):
         condition1 = Condition.objects.create(name="used")
         user1 = User.objects.create(
             email="test@kingpaintball.com",
-            username="test",
             password="password",
             is_active=True
         )
@@ -48,7 +49,6 @@ class TestLikesAPI(APITestCase):
         self.assertEqual(Item.objects.count(), 1)
 
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -91,7 +91,6 @@ class TestLikesAPI(APITestCase):
         }
 
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -116,7 +115,6 @@ class TestLikesAPI(APITestCase):
         Ensure that only object owners can update the like.
         """
         user = User.objects.create_user(
-            'user',
             'user@kingpaintball.com',
             'password'
         )
@@ -146,13 +144,11 @@ class TestLikesAPI(APITestCase):
         """
         # first create the like.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
@@ -186,7 +182,6 @@ class TestLikesAPI(APITestCase):
         """
         # first create the like.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
@@ -216,13 +211,11 @@ class TestLikesAPI(APITestCase):
         """
         # first create the like.
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
@@ -254,7 +247,6 @@ class TestLikesAPI(APITestCase):
         """
 
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
@@ -281,13 +273,11 @@ class TestLikesAPI(APITestCase):
         """
 
         user1 = User.objects.create_user(
-            'user1',
             'user1@kingpaintball.com',
             'password'
         )
 
         user2 = User.objects.create_user(
-            'user2',
             'user2@kingpaintball.com',
             'password'
         )
