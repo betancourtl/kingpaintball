@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
 import DRFAdapter from '../../../adapter/DRFAdapter';
-import client from '../../utils/client'
+import client from '../../../utils/client'
 
 
 // For more information on each option (and a full list of options) go to
@@ -50,6 +50,7 @@ export default NextAuth({
     // option is set - or by default if no database is specified.
     // https://next-auth.js.org/configuration/options#jwt
     jwt: {
+        
         // You can define your own encode/decode functions for signing and encryption
         // if you want to override the default behaviour.
         // encode: async ({ secret, token, maxAge }) => {},

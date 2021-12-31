@@ -39,6 +39,14 @@ server {
     location /media/ {
         proxy_pass http://backend;
     }
+    
+    location /api-auth/ {
+        proxy_pass http://backend;
+    }
+    
+    location /token/ {
+        proxy_pass http://backend;
+    }
 
     location ~ /static/(rest_framework|admin)/ {
         proxy_pass http://backend;

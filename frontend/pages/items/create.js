@@ -2,18 +2,18 @@ import { useState, useEffect } from 'react'
 import { useSession, getSession } from 'next-auth/react'
 import Layout from '../../components/layout'
 import AccessDenied from '../../components/access-denied'
-import client from '../utils/client'
-import axios from 'axios';
+import client from '../../utils/client'
+import axios from 'axios'
 
 const handleSubmit = (async e => {
     e.preventDefault()
     const formData = new FormData(e.target);
 
-    const data = [...formData.entries()]
+    const _data = [...formData.entries()]
         .reduce((acc, [k, v]) => ({ ...acc, ...{ [k]: v } }), {})
 
     try {
-        const { item } = await axios.post('/api/items/create/', data);
+        const { data: item } = await axios.post('/api/items/', _data);
         console.log('item', item)
     } catch (err) {
         console.log(err)

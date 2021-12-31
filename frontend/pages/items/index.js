@@ -1,6 +1,20 @@
 import { useSession, getSession } from 'next-auth/react'
 import Layout from '../../components/layout'
-import client from '../utils/client'
+import client from '../../utils/client'
+import axios from 'axios';
+import Link from 'next/link';
+
+const handleDeleteItem = id => async (e) => {
+    e.preventDefault();
+    console.log('clicked')
+    try {
+        const { data, status } = await axios.delete(`/api/items/${id}`)
+        console.log(status)
+        console.log(data)
+    } catch (err) {
+        console.log(err)
+    }
+}
 
 export default function ListItem({ items = [] }) {
 
@@ -11,7 +25,6 @@ export default function ListItem({ items = [] }) {
     const { data: session, status } = useSession()
     const loading = status === 'loading'
 
-    console.log(items)
     return (
         <Layout>
             <h1>List Items</h1>
@@ -21,7 +34,16 @@ export default function ListItem({ items = [] }) {
                     <div>
                         <div>
                             <img src={x.user.image} />
+                            <p style={{ fontWeight: 'bold' }}>Id: <span style={{ fontWeight: 'normal' }}>{x.id}</span></p>
                             <p style={{ fontWeight: 'bold' }}>Name: <span style={{ fontWeight: 'normal' }}>{x.user.name}</span></p>
+                        </div>
+                        <div>
+                            <button>
+                                <Link href={`/items/${x.id}`}>
+                                    Edit
+                                </Link>
+                            </button>
+                            <button onClick={handleDeleteItem(x.id)}>Delete</button>
                         </div>
                         <p style={{ fontWeight: 'bold' }}>Title: <span style={{ fontWeight: 'normal' }}>{x.title}</span></p>
                         <p style={{ fontWeight: 'bold' }}>Sold: <span style={{ fontWeight: 'normal' }}>{`${x.sold}`}</span></p>
